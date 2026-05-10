@@ -11,9 +11,18 @@ interface OcupacionDao {
     @Upsert
     suspend fun upsert(entity: OcupacionEntity)
 
-    @Query("Select * FROM ocupaciones")
-    fun observall():Flow<List<OcupacionEntity>>
+    @Delete
+    suspend fun Delete(entity: OcupacionEntity)
 
-    @Query("Select exists(Select 1 From ocupaciones WHERE descripcion = :descripcion )")
-    suspend fun existeDescripcion(descripcion : String) : Boolean
+    @Query("Select * FROM ocupaciones")
+    fun observeAll():Flow<List<OcupacionEntity>>
+
+    @Query("Select * From ocupaciones Where ocupacionId = :id")
+    suspend fun getById(id :Int): OcupacionEntity?
+
+    @Query("Delete From ocupaciones Where ocupacionId = :id")
+    suspend fun deleteById(id: Int)
+
+    @Query("Select exists(Select 1 From ocupaciones WHERE ocupacionId = :id )")
+    suspend fun exists(id: Int): Boolean
 }
