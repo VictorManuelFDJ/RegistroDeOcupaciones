@@ -8,7 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import edu.ucne.registrodeocupaciones.domain.model.Ocupacion
 import edu.ucne.registrodeocupaciones.domain.useCase.DeleteOcupacionUseCase
 import edu.ucne.registrodeocupaciones.domain.useCase.GetOcupacionUseCase
-import edu.ucne.registrodeocupaciones.domain.useCase.ObserveOcupacionesUseCase
+import edu.ucne.registrodeocupaciones.domain.useCase.GetOcupacionesSyncUseCase
 import edu.ucne.registrodeocupaciones.domain.useCase.UpsertOcupacionUseCase
 import edu.ucne.registrodeocupaciones.domain.useCase.validateDescription
 import edu.ucne.registrodeocupaciones.domain.useCase.validateSueldo
@@ -27,7 +27,7 @@ data class FormOcupacionScreen(val ocupacionId: Int)
 @HiltViewModel
 class FormOcupacionViewModel @Inject constructor(
     private val getOcupacionUseCase: GetOcupacionUseCase,
-    private val observeOcupacionesUseCase: ObserveOcupacionesUseCase,
+    private val getOcupacionesSyncUseCase: GetOcupacionesSyncUseCase,
     private val upsertOcupacionUseCase: UpsertOcupacionUseCase,
     private val deleteOcupacionUseCase: DeleteOcupacionUseCase,
     savedStateHandle: SavedStateHandle
@@ -84,7 +84,8 @@ class FormOcupacionViewModel @Inject constructor(
 
     private fun onSave(){
         viewModelScope.launch {
-            val ocupaciones = observeOcupacionesUseCase().first()
+
+            val ocupaciones = getOcupacionesSyncUseCase()
             val descripcionesExistentes = ocupaciones
                 .filter { it.ocupacionId != state.value.ocupacionId }
                 .map { it.descripcion }
@@ -121,8 +122,13 @@ class FormOcupacionViewModel @Inject constructor(
                         isNew = false
                     )
                 }
-            }.onFailure {
-                _state.update { it.copy(isSaving = false) }
+            }.onFailure { error ->
+                _state.update {
+                    it.copy(
+                        isSaving = false,
+                        descripcionError = error.message
+                    )
+                }
             }
         }
     }

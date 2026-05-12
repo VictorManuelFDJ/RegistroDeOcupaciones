@@ -35,4 +35,9 @@ class OcupacionRepositoryImpl @Inject constructor(
         return localDataSource.exists(id)
     }
 
+    override suspend fun getOcupacionesSync(): List<Ocupacion> {
+        return localDataSource.getAllSync().map { it.toDomain() }
+    }
+
+
 }
