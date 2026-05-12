@@ -24,8 +24,7 @@ class OcupacionRepositoryImpl @Inject constructor(
     }
 
     override suspend fun upsert(ocupacion: Ocupacion): Int {
-        localDataSource.upsert(ocupacion.toEntity())
-        return ocupacion.ocupacionId
+        return localDataSource.upsert(ocupacion.toEntity()).toInt()
     }
 
     override suspend fun delete(id: Int) {

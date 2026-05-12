@@ -3,11 +3,12 @@ package edu.ucne.registrodeocupaciones.domain.useCase
 import edu.ucne.registrodeocupaciones.domain.model.Ocupacion
 import edu.ucne.registrodeocupaciones.domain.repository.OcupacionRepository
 import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
 
-class ObserveOcupacionesUseCase (
+class ObserveOcupacionesUseCase @Inject constructor (
     private val repository: OcupacionRepository
 ){
-    suspend operator fun invoke(): Flow<List<Ocupacion>> = repository.observeOcupaciones()
+    operator fun invoke(): Flow<List<Ocupacion>> = repository.observeOcupaciones()
 }
 
 

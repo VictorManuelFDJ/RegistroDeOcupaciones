@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.Flow
 interface OcupacionDao {
 
     @Upsert
-    suspend fun upsert(entity: OcupacionEntity)
+    suspend fun upsert(entity: OcupacionEntity): Long
 
     @Delete
-    suspend fun Delete(entity: OcupacionEntity)
+    suspend fun delete(entity: OcupacionEntity)
 
     @Query("Select * FROM ocupaciones")
     fun observeAll():Flow<List<OcupacionEntity>>
