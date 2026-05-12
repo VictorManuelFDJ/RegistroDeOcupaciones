@@ -86,8 +86,12 @@ fun OcupacionListBody(
                         items(
                             items = state.ocupacion,
                             key = {it.ocupacionId}
-                        ){ ocupacion -> OcupacionItems(ocupacion = ocupacion,
-                            onDelete = {onEvent(OcupacionListUiEvent.Delete(ocupacion.ocupacionId))})
+                        ){ ocupacion -> 
+                            OcupacionItems(
+                                ocupacion = ocupacion,
+                                onEdit = { onEditOcupacion(ocupacion.ocupacionId) },
+                                onDelete = { onEvent(OcupacionListUiEvent.Delete(ocupacion.ocupacionId)) }
+                            )
                         }
                     }
                 }
@@ -98,11 +102,14 @@ fun OcupacionListBody(
 @Composable
 fun OcupacionItems(
     ocupacion: Ocupacion,
+    onEdit: () -> Unit,
     onDelete: () -> Unit
 ){
-    ElevatedCard(modifier = Modifier.
-    fillMaxWidth().
-    testTag("ocupacion_item_${ocupacion.ocupacionId}")
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .testTag("ocupacion_item_${ocupacion.ocupacionId}"),
+        onClick = onEdit
     ) {
         Row(modifier = Modifier.
         fillMaxWidth().

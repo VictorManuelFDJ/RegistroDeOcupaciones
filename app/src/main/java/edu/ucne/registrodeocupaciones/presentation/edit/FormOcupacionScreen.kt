@@ -38,7 +38,7 @@ fun FormOcupacionScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Nueva Ocupación")},
+                title = { Text(if (state.ocupacionId == null || state.ocupacionId == 0) "Nueva Ocupación" else "Editar Ocupación") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Atras")
@@ -46,7 +46,7 @@ fun FormOcupacionScreen(
                 }
             )
         }
-    ){ padding ->
+    ) { padding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
