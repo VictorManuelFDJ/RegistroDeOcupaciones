@@ -5,8 +5,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import edu.ucne.registrodeocupaciones.presentation.edit.FormOcupacionScreen
-import edu.ucne.registrodeocupaciones.presentation.list.OcupacionListScreen
+import edu.ucne.registrodeocupaciones.presentation.ocupacion.edit.FormOcupacionScreen
+import edu.ucne.registrodeocupaciones.presentation.ocupacion.list.OcupacionListScreen
 
 @Composable
 fun OcupacionNavHost(

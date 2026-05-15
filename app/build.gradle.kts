@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "edu.ucne.registrodeocupaciones"
-    compileSdk = 36
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "edu.ucne.registrodeocupaciones"
@@ -30,6 +30,7 @@ android {
         }
     }
     compileOptions {
+        isCoreLibraryDesugaringEnabled = true
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
@@ -51,7 +52,7 @@ dependencies {
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.material3)
+
 
     // Hilt
     implementation(libs.hilt.android)
@@ -69,6 +70,11 @@ dependencies {
 
     implementation(libs.navigation.compose)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.material.icons.extended)
+    implementation(libs.kotlinx.datetime)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+
+
 
 
 
@@ -79,6 +85,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
-    implementation(libs.material.icons.extended)
+
 
 }
