@@ -25,7 +25,9 @@ object DatabaseModule{
             context,
             RegistroDb::class.java,
             "Ocupacion_DB"
-        ).build()
+        )
+            .fallbackToDestructiveMigration()
+            .build()
     }
     @Provides
     @Singleton

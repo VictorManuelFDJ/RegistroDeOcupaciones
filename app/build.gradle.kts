@@ -72,7 +72,31 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.material.icons.extended)
     implementation(libs.kotlinx.datetime)
-    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
+
+    // Unit Testing
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
+    testImplementation("io.mockk:mockk:1.14.9")
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation(libs.turbine)
+
+    // Android Instrumented Testing
+    androidTestImplementation("androidx.test.ext:junit:1.3.0")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.7.0")
+
+    // Compose Testing
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.11.1")
+    debugImplementation("androidx.compose.ui:ui-test-manifest:1.11.1")
+
+    // Hilt Testing
+    testImplementation("com.google.dagger:hilt-android-testing:2.59.2")
+    kspTest(libs.hilt.compiler)
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.59.2")
+    kspAndroidTest(libs.hilt.compiler)
+
+    // Room Testing
+    testImplementation("androidx.room:room-testing:2.8.4")
 
 
 

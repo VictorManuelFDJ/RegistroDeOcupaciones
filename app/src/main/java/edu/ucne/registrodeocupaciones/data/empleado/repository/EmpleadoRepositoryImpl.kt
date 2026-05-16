@@ -23,7 +23,7 @@ class EmpleadoRepositoryImpl @Inject constructor(
     }
 
     override suspend fun delete(id: Int) {
-        localDataSource.delteById(id)
+        localDataSource.deleteById(id)
     }
 
     override suspend fun exists(id: Int): Boolean {

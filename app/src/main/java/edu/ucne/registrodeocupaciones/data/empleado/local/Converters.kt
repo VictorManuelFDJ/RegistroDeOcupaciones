@@ -14,5 +14,4 @@ class Converters {
     fun datatoString(date: LocalDate?): String?{
         return date?.toString()
     }
-
 }

@@ -18,11 +18,11 @@ interface EmpleadosDao {
     @Query("Select * From RegistroEmpleados")
     fun observeAll(): Flow<List<EmpleadosEntity>>
 
-    @Query("Select * From RegistroEmpleados where empleadoId")
+    @Query("Select * From RegistroEmpleados where empleadoId = :id")
     suspend fun getById(id: Int): EmpleadosEntity?
 
     @Query("Delete From RegistroEmpleados Where empleadoId = :id")
-    suspend fun delteById(id: Int)
+    suspend fun deleteById(id: Int)
 
     @Query("Select exists(Select 1 From RegistroEmpleados Where empleadoId = :id )")
     suspend fun exists(id: Int): Boolean

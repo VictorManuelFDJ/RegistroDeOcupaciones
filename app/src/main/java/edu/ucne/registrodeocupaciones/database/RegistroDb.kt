@@ -11,7 +11,7 @@ import edu.ucne.registrodeocupaciones.data.ocupacion.local.OcupacionEntity
 
 @Database(
     entities = [OcupacionEntity::class, EmpleadosEntity:: class],
-    version = 1
+    version = 2
 )
 @TypeConverters(Converters::class)
 abstract  class RegistroDb: RoomDatabase() {
