@@ -7,10 +7,10 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
+import edu.ucne.registrodeocupaciones.presentation.empleado.edit.FormEmpleadoScreen
+import edu.ucne.registrodeocupaciones.presentation.empleado.list.EmpleadoListScreen
 import edu.ucne.registrodeocupaciones.presentation.ocupacion.edit.FormOcupacionScreen
 import edu.ucne.registrodeocupaciones.presentation.ocupacion.list.OcupacionListScreen
-import kotlinx.datetime.format.Padding
 
 @Composable
 fun MainNavigation(
@@ -35,6 +35,25 @@ fun MainNavigation(
 
         composable<Screen.OcupacionForm> {
             FormOcupacionScreen(
+                onBack = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+        composable<Screen.EmpleadoList> {
+            EmpleadoListScreen(
+                onAddEmpleado = {
+                    navController.navigate(Screen.EmpleadoForm())
+                },
+                onEditEmpleado = { id ->
+                    navController.navigate(Screen.EmpleadoForm(empleadoId = id))
+                }
+            )
+        }
+
+        composable<Screen.EmpleadoForm> {
+            FormEmpleadoScreen(
                 onBack = {
                     navController.navigateUp()
                 }

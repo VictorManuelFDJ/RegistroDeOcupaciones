@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -41,7 +41,7 @@ fun FormOcupacionScreen(
                 title = { Text(if (state.ocupacionId == null || state.ocupacionId == 0) "Nueva Ocupación" else "Editar Ocupación") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(imageVector = Icons.Default.ArrowBack, contentDescription = "Atras")
+                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atras")
                     }
                 }
             )
@@ -80,7 +80,7 @@ fun FormOcupacionScreen(
                 singleLine = true
             )
             Button(
-                onClick = { viewModel.onEvent(FormOcupacionUiEvent.save) },
+                onClick = { viewModel.onEvent(FormOcupacionUiEvent.Save) },
                 modifier = Modifier
                     .fillMaxWidth()
                     .testTag("btn_save"),

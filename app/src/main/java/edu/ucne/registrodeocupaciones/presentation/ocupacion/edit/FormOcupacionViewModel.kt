@@ -12,6 +12,7 @@ import edu.ucne.registrodeocupaciones.domain.ocupacion.useCase.GetOcupacionesSyn
 import edu.ucne.registrodeocupaciones.domain.ocupacion.useCase.UpsertOcupacionUseCase
 import edu.ucne.registrodeocupaciones.domain.ocupacion.useCase.validateDescription
 import edu.ucne.registrodeocupaciones.domain.ocupacion.useCase.validateSueldo
+import edu.ucne.registrodeocupaciones.presentation.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -19,9 +20,6 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 import kotlinx.serialization.Serializable
-
-@Serializable
-data class FormOcupacionScreen(val ocupacionId: Int)
 
 @HiltViewModel
 class FormOcupacionViewModel @Inject constructor(
@@ -31,7 +29,7 @@ class FormOcupacionViewModel @Inject constructor(
     private val deleteOcupacionUseCase: DeleteOcupacionUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel(){
-    private val routerArgs = savedStateHandle.toRoute<FormOcupacionScreen>()
+    private val routerArgs = savedStateHandle.toRoute<Screen.OcupacionForm>()
     private val ocupacionId: Int  = routerArgs.ocupacionId
 
     private val _state = MutableStateFlow(FormOcupacionUiState())
@@ -52,8 +50,8 @@ class FormOcupacionViewModel @Inject constructor(
                 it.copy(sueldo = event.value, sueldoError = null)
             }
 
-            FormOcupacionUiEvent.save -> onSave()
-            FormOcupacionUiEvent.delete -> onDelete()
+            FormOcupacionUiEvent.Save -> onSave()
+            FormOcupacionUiEvent.Delete -> onDelete()
         }
     }
 

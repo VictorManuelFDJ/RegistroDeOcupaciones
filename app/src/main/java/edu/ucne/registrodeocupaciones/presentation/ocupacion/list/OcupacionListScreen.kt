@@ -8,6 +8,8 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +49,18 @@ fun OcupacionListBody(
     }
 
     Scaffold(
+        topBar = {
+            Row(verticalAlignment =  Alignment.CenterVertically){
+                Icon(
+                    imageVector = Icons.Default.Work,
+                    contentDescription = null,
+                    modifier = Modifier.padding(start = 12.dp)
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text("Ocupaciones")
+            }
+
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
             FloatingActionButton(
@@ -55,7 +69,7 @@ fun OcupacionListBody(
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,
-                    contentDescription = "Agregar tarea"
+                    contentDescription = "Agregar Ocupacion"
                 )
             }
         }

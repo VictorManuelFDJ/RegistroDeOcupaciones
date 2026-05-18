@@ -5,7 +5,7 @@ data class EmpleadoValidation(
     val error: String? = null
 )
 
-fun validateNombre(nombre: String, empleadoExistentes: List<String>):
+fun validateNombre(nombre: String, nombresExistentes: List<String> = emptyList()):
         EmpleadoValidation{
     return when{
         nombre.isBlank() -> EmpleadoValidation(false,
@@ -20,12 +20,14 @@ fun validateNombre(nombre: String, empleadoExistentes: List<String>):
         )
         nombre.length > 16 -> EmpleadoValidation(false,
             "El nombre es demasiado largo (máximo 16 caracteres)")
+        nombresExistentes.any { it.equals(nombre, ignoreCase = true) } -> EmpleadoValidation(false,
+            "Ya existe un empleado con este nombre")
         else -> EmpleadoValidation(true)
     }
 }
+val opcionesValidas = listOf("Masculino", "Femenino", "Otros")
 fun validateSexo(sexo: String): EmpleadoValidation{
     val sexo = sexo.trim()
-    val opcionesValidas = listOf("Masculino", "Femenino", "Otros")
     return when{
         sexo.isBlank() -> EmpleadoValidation(false,
             "Debe seleccionar un sexo de la lista")
@@ -41,6 +43,18 @@ fun validateFecha(fecha: java.time.LocalDate): EmpleadoValidation{
             "La fecha de ingreso no puede ser una fecha futura")
         fecha.isBefore(java.time.LocalDate.of(2000,1,1)) -> EmpleadoValidation(false,
             "La fecha de ingreso no puede ser anterior al año 2000")
+        else -> EmpleadoValidation(true)
+    }
+}
+
+fun validateSueldoE(sueldo: String): EmpleadoValidation{
+    return  when{
+        sueldo.isBlank() -> EmpleadoValidation(false,
+            "El sueldo no puede estar vacio tu no cobra es")
+        sueldo.toDoubleOrNull() == null -> EmpleadoValidation(false,
+            "Ingrese un sueldo valido")
+        sueldo.toDouble() <= 0.0 -> EmpleadoValidation(false,
+            "El sueldo tiene que ser mayor que cero")
         else -> EmpleadoValidation(true)
     }
 }

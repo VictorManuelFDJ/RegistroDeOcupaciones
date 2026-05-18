@@ -17,8 +17,6 @@ interface OcupacionDao {
     @Query("Select * FROM ocupaciones")
     fun observeAll():Flow<List<OcupacionEntity>>
 
-    @Query("SELECT * FROM ocupaciones")
-    suspend fun getAllSync(): List<OcupacionEntity>
     @Query("Select * From ocupaciones Where ocupacionId = :id")
     suspend fun getById(id :Int): OcupacionEntity?
 
@@ -27,6 +25,9 @@ interface OcupacionDao {
 
     @Query("Select exists(Select 1 From ocupaciones WHERE ocupacionId = :id )")
     suspend fun exists(id: Int): Boolean
+
+    @Query("Select * From ocupaciones")
+    suspend fun getAllSync(): List<OcupacionEntity>
 
 
 }
