@@ -1,0 +1,43 @@
+package edu.ucne.registrodeocupaciones.data.ocupacion.repository
+
+
+import edu.ucne.registrodeocupaciones.data.ocupacion.local.OcupacionDao
+import edu.ucne.registrodeocupaciones.data.ocupacion.mapper.toDomain
+import edu.ucne.registrodeocupaciones.data.ocupacion.mapper.toEntity
+import edu.ucne.registrodeocupaciones.domain.ocupacion.model.Ocupacion
+import edu.ucne.registrodeocupaciones.domain.ocupacion.repository.OcupacionRepository
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import javax.inject.Inject
+
+
+class OcupacionRepositoryImpl @Inject constructor(
+    private val localDataSource: OcupacionDao
+): OcupacionRepository{
+    override fun observeOcupaciones(): Flow<List<Ocupacion>> {
+        return localDataSource.observeAll().map{entities ->
+            entities.map { it.toDomain()}}
+    }
+
+    override suspend fun getOcupacion(id: Int): Ocupacion? {
+        return localDataSource.getById(id)?.toDomain()
+    }
+
+    override suspend fun upsert(ocupacion: Ocupacion): Int {
+        return localDataSource.upsert(ocupacion.toEntity()).toInt()
+    }
+
+    override suspend fun delete(id: Int) {
+        localDataSource.deleteById(id)
+    }
+
+    override suspend fun exists(id: Int): Boolean {
+        return localDataSource.exists(id)
+    }
+
+    override suspend fun getOcupacionesSync(): List<Ocupacion> {
+        return localDataSource.getAllSync().map { it.toDomain() }
+    }
+
+
+}

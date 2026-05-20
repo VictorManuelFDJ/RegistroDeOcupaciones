@@ -1,0 +1,135 @@
+package edu.ucne.registrodeocupaciones.presentation.empleado.edit
+
+import androidx.lifecycle.SavedStateHandle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
+import dagger.hilt.android.lifecycle.HiltViewModel
+import edu.ucne.registrodeocupaciones.domain.empleado.model.Empleado
+import edu.ucne.registrodeocupaciones.domain.empleado.useCase.DeleteEmpleadoUseCase
+import edu.ucne.registrodeocupaciones.domain.empleado.useCase.GetEmpleadoUseCase
+import edu.ucne.registrodeocupaciones.domain.empleado.useCase.UpsertEmpleadoUseCase
+import edu.ucne.registrodeocupaciones.domain.empleado.useCase.validateFecha
+import edu.ucne.registrodeocupaciones.domain.empleado.useCase.validateNombre
+import edu.ucne.registrodeocupaciones.domain.empleado.useCase.validateSexo
+import edu.ucne.registrodeocupaciones.domain.empleado.useCase.validateSueldoE
+import edu.ucne.registrodeocupaciones.presentation.empleado.list.EmpleadoListUiEvent
+import edu.ucne.registrodeocupaciones.presentation.empleado.edit.FormEmpleadoUiState
+import edu.ucne.registrodeocupaciones.presentation.navigation.Screen
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.serialization.Serializable
+import javax.inject.Inject
+
+@HiltViewModel
+class FormEmpleadoViewModel @Inject constructor(
+    private val getEmpleadoUseCase: GetEmpleadoUseCase,
+    private val upsertEmpleadoUseCase: UpsertEmpleadoUseCase,
+    private val deleteEmpleadoUseCase: DeleteEmpleadoUseCase,
+    savedStateHandle: SavedStateHandle
+): ViewModel(){
+    private val routerArgs = savedStateHandle.toRoute<Screen.EmpleadoForm>()
+    private val empleadoId: Int = routerArgs.empleadoId
+    private val  _state = MutableStateFlow(FormEmpleadoUiState())
+    val state: StateFlow<FormEmpleadoUiState> = _state.asStateFlow()
+    init {
+        loadEmpleado(empleadoId)
+    }
+    fun onEvent(event: FormEmpleadoUiEvent){
+        when(event){
+            is FormEmpleadoUiEvent.NombreChanged -> _state.update {
+                it.copy(nombre = event.value, nombreError = null)}
+            is FormEmpleadoUiEvent.SexoChanged -> _state.update {
+                it.copy(sexo = event.value, sexoError = null)}
+            is FormEmpleadoUiEvent.SueldoChanged -> _state.update {
+                it.copy(sueldo = event.value, sueldoError = null)}
+            is FormEmpleadoUiEvent.FechaIngresoChanged -> _state.update {
+                it.copy(fechaIngreso = event.value, fechaError = null)}
+            FormEmpleadoUiEvent.Save -> onSave()
+            FormEmpleadoUiEvent.Delete -> onDelete()
+        }
+    }
+    private fun loadEmpleado(id: Int?){
+        if(id == null || id == 0 ){
+            _state.update { it.copy(isNew = true, empleadoId = null) }
+            return
+        }
+        viewModelScope.launch {
+            val empleado = getEmpleadoUseCase(id)
+            if(empleado != null){
+                _state.update {
+                    it.copy(
+                        isNew = false,
+                        empleadoId = empleado.empleadoId,
+                        nombre = empleado.nombre,
+                        sexo = empleado.sexo,
+                        sueldo = empleado.sueldo.toString(),
+                        fechaIngreso = empleado.fechaIngreso
+                    )
+                }
+            }else{
+                _state.update { it.copy(isNew = true, empleadoId = null) }
+            }
+        }
+    }
+    private fun onSave(){
+        if (_state.value.isSaving) return
+        viewModelScope.launch {
+           val nombreValidation = validateNombre(state.value.nombre)
+            val sexoValidation = validateSexo(state.value.sexo)
+            val sueldoValidation = validateSueldoE(state.value.sueldo)
+            val fechaIngresoValidation = validateFecha(state.value.fechaIngreso)
+            if (!nombreValidation.isValid
+                || !sexoValidation.isValid
+                || !sueldoValidation.isValid
+                || !fechaIngresoValidation.isValid){
+                _state.update {
+                    it.copy(
+                        nombreError = nombreValidation.error,
+                        sexoError = sexoValidation.error,
+                        sueldoError = sueldoValidation.error,
+                        fechaError = fechaIngresoValidation.error
+                    )
+                }
+                return@launch
+            }
+            _state.update { it.copy(isSaving = true) }
+            val empleado = Empleado(
+                empleadoId = state.value.empleadoId ?: 0,
+                nombre = state.value.nombre.trim(),
+                sexo = state.value.sexo.trim(),
+                sueldo = state.value.sueldo.toDouble(),
+                fechaIngreso = state.value.fechaIngreso
+            )
+            val result = upsertEmpleadoUseCase(empleado)
+            result.onSuccess { newId ->
+                _state.update {
+                    it.copy(
+                        isSaving = false,
+                        saved = true,
+                        empleadoId = newId,
+                        isNew = false
+                    )
+                }
+
+            }.onFailure { error ->
+                _state.update { it.copy(
+                    isSaving = false,
+                    nombreError = error.message
+                ) }
+            }
+        }
+    }
+
+    private fun onDelete(){
+        val id = state.value.empleadoId ?: return
+        viewModelScope.launch {
+            _state.update { it.copy(isDeleting = true) }
+            deleteEmpleadoUseCase(id)
+            _state.update { it.copy(isDeleting = false, deleted = true) }
+        }
+    }
+}
