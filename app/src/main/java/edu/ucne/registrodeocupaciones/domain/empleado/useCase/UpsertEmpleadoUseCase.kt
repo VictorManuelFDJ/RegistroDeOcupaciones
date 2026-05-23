@@ -32,6 +32,10 @@ class UpsertEmpleadoUseCase @Inject constructor(
         if(!sueldoResult.isValid){
             return Result.failure(IllegalArgumentException(sueldoResult.error))
         }
+
+        if (empleado.ocupacionId <= 0 ){
+            return Result.failure(IllegalArgumentException("Debe Selecionar una ocupacion valida para el empleado"))
+        }
         return runCatching{repository.upsert(empleado)}
 
     }

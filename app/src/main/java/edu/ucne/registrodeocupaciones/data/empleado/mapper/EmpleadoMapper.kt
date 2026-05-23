@@ -8,7 +8,9 @@ fun EmpleadosEntity.toDomain(): Empleado = Empleado(
     fechaIngreso = fechaIngreso,
     nombre = nombre,
     sexo = sexo,
-    sueldo =sueldo
+    sueldo =sueldo,
+    frecuenciaDePago = frecuenciaDePago,
+    ocupacionId = ocupacionId
 )
 
 fun Empleado.toEntity(): EmpleadosEntity = EmpleadosEntity(
@@ -16,5 +18,8 @@ fun Empleado.toEntity(): EmpleadosEntity = EmpleadosEntity(
     fechaIngreso = fechaIngreso,
     nombre = nombre,
     sexo = sexo,
-    sueldo = sueldo
+    sueldo = sueldo,
+    frecuenciaDePago = frecuenciaDePago,
+    ocupacionId =ocupacionId
+
 )

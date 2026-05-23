@@ -5,10 +5,11 @@ import androidx.room.PrimaryKey
 
 
 
-@Entity(tableName = "Ocupaciones")
+@Entity(tableName = "ocupaciones")
 data class OcupacionEntity(
     @PrimaryKey(autoGenerate = true)
     val ocupacionId: Int = 0,
     val descripcion: String,
-    val sueldo: Double
+    val sueldo: Double,
+    val esPuestoDireccion: Boolean = false
 )

@@ -13,7 +13,6 @@ import edu.ucne.registrodeocupaciones.domain.empleado.useCase.validateFecha
 import edu.ucne.registrodeocupaciones.domain.empleado.useCase.validateNombre
 import edu.ucne.registrodeocupaciones.domain.empleado.useCase.validateSexo
 import edu.ucne.registrodeocupaciones.domain.empleado.useCase.validateSueldoE
-import edu.ucne.registrodeocupaciones.presentation.empleado.list.EmpleadoListUiEvent
 import edu.ucne.registrodeocupaciones.presentation.empleado.edit.FormEmpleadoUiState
 import edu.ucne.registrodeocupaciones.presentation.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -48,6 +47,12 @@ class FormEmpleadoViewModel @Inject constructor(
                 it.copy(sueldo = event.value, sueldoError = null)}
             is FormEmpleadoUiEvent.FechaIngresoChanged -> _state.update {
                 it.copy(fechaIngreso = event.value, fechaError = null)}
+            is FormEmpleadoUiEvent.FrecuenciaDePagoChanged -> _state.update {
+                it.copy(frecuenciaDePago = event.value)
+            }
+            is FormEmpleadoUiEvent.OcupacionChanged -> _state.update {
+                it.copy(ocupacionId = event.value, ocupacionError = null)
+            }
             FormEmpleadoUiEvent.Save -> onSave()
             FormEmpleadoUiEvent.Delete -> onDelete()
         }
@@ -67,7 +72,10 @@ class FormEmpleadoViewModel @Inject constructor(
                         nombre = empleado.nombre,
                         sexo = empleado.sexo,
                         sueldo = empleado.sueldo.toString(),
-                        fechaIngreso = empleado.fechaIngreso
+                        fechaIngreso = empleado.fechaIngreso,
+                        frecuenciaDePago = empleado.frecuenciaDePago,
+                        ocupacionId = empleado.ocupacionId
+
                     )
                 }
             }else{
@@ -102,7 +110,10 @@ class FormEmpleadoViewModel @Inject constructor(
                 nombre = state.value.nombre.trim(),
                 sexo = state.value.sexo.trim(),
                 sueldo = state.value.sueldo.toDouble(),
-                fechaIngreso = state.value.fechaIngreso
+                fechaIngreso = state.value.fechaIngreso,
+                frecuenciaDePago = state.value.frecuenciaDePago,
+                ocupacionId = state.value.ocupacionId ?: 0
+
             )
             val result = upsertEmpleadoUseCase(empleado)
             result.onSuccess { newId ->

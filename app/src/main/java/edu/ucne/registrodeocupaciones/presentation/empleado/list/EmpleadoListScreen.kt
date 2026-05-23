@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import edu.ucne.registrodeocupaciones.data.empleado.local.FrecuenciaDePago
 import edu.ucne.registrodeocupaciones.domain.empleado.model.Empleado
 import java.time.format.DateTimeFormatter
 
@@ -156,6 +157,11 @@ fun EmpleadoItems(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
+                Text(
+                    text = "Frecuencia: ${empleado.frecuenciaDePago}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
+                )
             }
             IconButton(
                 onClick = onDelete,
@@ -182,7 +188,9 @@ private fun EmpleadoListBodyPreview() {
                     nombre = "Juan Perez",
                     sueldo = 25000.0,
                     fechaIngreso = java.time.LocalDate.now(),
-                    sexo = "M"
+                    sexo = "M",
+                    frecuenciaDePago = FrecuenciaDePago.MENSUAL,
+                    ocupacionId = 1
                 )
             )
         )
