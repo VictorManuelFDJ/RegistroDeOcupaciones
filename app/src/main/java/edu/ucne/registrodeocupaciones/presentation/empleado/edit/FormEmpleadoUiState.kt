@@ -1,7 +1,7 @@
 package edu.ucne.registrodeocupaciones.presentation.empleado.edit
 
 import edu.ucne.registrodeocupaciones.data.empleado.local.FrecuenciaDePago
-import edu.ucne.registrodeocupaciones.data.ocupacion.local.OcupacionEntity
+import edu.ucne.registrodeocupaciones.domain.ocupacion.model.Ocupacion
 import java.time.LocalDate
 
 data class FormEmpleadoUiState(
@@ -10,9 +10,9 @@ data class FormEmpleadoUiState(
     val sexo: String = "",
     val sueldo: String = "",
     val fechaIngreso: LocalDate = LocalDate.now(),
-    val frecuenciaDePago: FrecuenciaDePago? = null,
+    val frecuenciaDePago: FrecuenciaDePago = FrecuenciaDePago.MENSUAL,
     val ocupacionId: Int? = null,
-    val ocupacionDisponible: List<OcupacionEntity> = emptyList(),
+    val ocupacionDisponible: List<Ocupacion> = emptyList(),
     //-----------------------------------------------------------
     val nombreError: String? = null,
     val sexoError: String? = null,

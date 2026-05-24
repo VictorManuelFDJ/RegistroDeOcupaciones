@@ -13,6 +13,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
@@ -79,6 +80,40 @@ fun FormOcupacionScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true
             )
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f)
+                ),
+                modifier = Modifier.fillMaxWidth()
+            ){
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Column(modifier = Modifier.weight(1f)) {
+                        Text(
+                            text = "¿Es puesto de dirección?",
+                            style = MaterialTheme.typography.titleMedium
+                        )
+                        Text(
+                            text = "Exento de horas extras ordinarias",
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Switch(
+                        checked = state.esPuestoDireccion,
+                        onCheckedChange = {
+                            viewModel.onEvent(FormOcupacionUiEvent.EsPuestoDireccionChanged(it))
+                        },
+                        modifier = Modifier.testTag("switch_direccion")
+                    )
+                }
+            }
             Button(
                 onClick = { viewModel.onEvent(FormOcupacionUiEvent.Save) },
                 modifier = Modifier

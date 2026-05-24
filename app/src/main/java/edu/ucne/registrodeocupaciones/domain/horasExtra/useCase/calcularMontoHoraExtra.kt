@@ -1,4 +1,4 @@
-package edu.ucne.registrodeocupaciones.domain.horasExtra
+package edu.ucne.registrodeocupaciones.domain.horasExtra.useCase
 
 import edu.ucne.registrodeocupaciones.data.empleado.local.FrecuenciaDePago
 import edu.ucne.registrodeocupaciones.data.horasExtra.local.TipoHoraExtra

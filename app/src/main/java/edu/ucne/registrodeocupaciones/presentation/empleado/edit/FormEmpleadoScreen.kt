@@ -1,5 +1,6 @@
 package edu.ucne.registrodeocupaciones.presentation.empleado.edit
 
+import android.R.attr.text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,6 +40,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import edu.ucne.registrodeocupaciones.data.empleado.local.FrecuenciaDePago
 import edu.ucne.registrodeocupaciones.domain.empleado.useCase.opcionesValidas
 import java.time.Instant
 import java.time.ZoneId
@@ -55,6 +57,9 @@ fun FormEmpleadoScreen(
     val datePickerState = rememberDatePickerState()
 
     var expandedSexo by remember { mutableStateOf(false) }
+    var expandedFrecuencia by remember { mutableStateOf(false) }
+    var expandedOcupacion by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(state.saved) {
         if (state.saved){
@@ -147,6 +152,78 @@ fun FormEmpleadoScreen(
                 supportingText = state.fechaError?.let { { Text(it) } },
                 singleLine = true
             )
+            ExposedDropdownMenuBox(
+                expanded = expandedFrecuencia,
+                onExpandedChange = {expandedFrecuencia = it}
+            ) {
+                OutlinedTextField(
+                    value = state.frecuenciaDePago.mensaje,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = {Text("Frecuencia de Pago")},
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedFrecuencia)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                        .testTag("input_frecuencia"),
+                    isError = state.frecuenciaDePagoError != null,
+                    supportingText = state.frecuenciaDePagoError?.let{ { Text(it) } },
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedFrecuencia,
+                    onDismissRequest = {expandedFrecuencia = false}
+                ) {
+                    FrecuenciaDePago.entries.forEach { frecuencia ->
+                        DropdownMenuItem(
+                            text = {Text(frecuencia.mensaje)},
+                            onClick = {
+                                viewModel.onEvent(FormEmpleadoUiEvent.FrecuenciaDePagoChanged(frecuencia))
+                                expandedFrecuencia = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            ExposedDropdownMenuBox(
+                expanded = expandedOcupacion,
+                onExpandedChange = {expandedOcupacion = it}
+            ) {
+                OutlinedTextField(
+                    value = state.ocupacionDisponible
+                        .find { it.ocupacionId == state.ocupacionId}
+                        ?.descripcion?: "Selecione ocupacion",
+                    onValueChange = {},
+                    readOnly = true,
+                    label = {Text("Ocupacion ")},
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedOcupacion)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                        .testTag("input_Ocupacion"),
+                    isError = state.ocupacionError != null,
+                    supportingText = state.ocupacionError?.let { {Text(it) } },
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedOcupacion,
+                    onDismissRequest = {expandedOcupacion = false}
+                ) {
+                    state.ocupacionDisponible.forEach { ocupacion ->
+                        DropdownMenuItem(
+                            text = {Text(ocupacion.descripcion)},
+                            onClick = {
+                                viewModel.onEvent(FormEmpleadoUiEvent.OcupacionIdChanged(ocupacion.ocupacionId))
+                                expandedOcupacion = false
+                            }
+                        )
+                    }
+                }
+            }
+
             if(showDatePicker){
                 DatePickerDialog(
                     onDismissRequest = {showDatePicker = false},
@@ -202,9 +279,6 @@ fun FormEmpleadoScreen(
                     Text("Guardar")
                 }
             }
-
-
-
         }
     }
 }

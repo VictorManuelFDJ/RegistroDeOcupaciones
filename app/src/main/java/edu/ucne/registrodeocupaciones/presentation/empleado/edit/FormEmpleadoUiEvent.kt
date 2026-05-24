@@ -8,10 +8,8 @@ sealed interface FormEmpleadoUiEvent {
     data class SexoChanged(val value: String) : FormEmpleadoUiEvent
     data class SueldoChanged(val value: String) : FormEmpleadoUiEvent
     data class FechaIngresoChanged(val value: LocalDate) : FormEmpleadoUiEvent
-
     data class FrecuenciaDePagoChanged(val value: FrecuenciaDePago) : FormEmpleadoUiEvent
-
-    data class OcupacionChanged(val value: Int) : FormEmpleadoUiEvent
+    data class OcupacionIdChanged(val value: Int) : FormEmpleadoUiEvent
     data object Save : FormEmpleadoUiEvent
     data object Delete : FormEmpleadoUiEvent
 }

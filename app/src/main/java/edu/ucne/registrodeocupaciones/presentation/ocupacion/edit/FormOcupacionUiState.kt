@@ -4,6 +4,7 @@ data class FormOcupacionUiState(
     val ocupacionId: Int? = null,
     val descripcion: String = "",
     val sueldo: String = "",
+    val esPuestoDireccion: Boolean =false,
     val descripcionError: String? = null,
     val sueldoError: String? = null,
     val isSaving: Boolean = false,

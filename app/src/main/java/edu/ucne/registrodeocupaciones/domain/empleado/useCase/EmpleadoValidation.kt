@@ -1,10 +1,11 @@
 package edu.ucne.registrodeocupaciones.domain.empleado.useCase
 
+import edu.ucne.registrodeocupaciones.data.empleado.local.FrecuenciaDePago
+
 data class EmpleadoValidation(
     val isValid: Boolean,
     val error: String? = null
 )
-
 fun validateNombre(nombre: String, nombresExistentes: List<String> = emptyList()):
         EmpleadoValidation{
     return when{
@@ -46,7 +47,6 @@ fun validateFecha(fecha: java.time.LocalDate): EmpleadoValidation{
         else -> EmpleadoValidation(true)
     }
 }
-
 fun validateSueldoE(sueldo: String): EmpleadoValidation{
     return  when{
         sueldo.isBlank() -> EmpleadoValidation(false,
@@ -55,6 +55,20 @@ fun validateSueldoE(sueldo: String): EmpleadoValidation{
             "Ingrese un sueldo valido")
         sueldo.toDouble() <= 0.0 -> EmpleadoValidation(false,
             "El sueldo tiene que ser mayor que cero")
+        else -> EmpleadoValidation(true)
+    }
+}
+fun validateFrecuenciaPago(frecuencia: String): EmpleadoValidation{
+    return when{
+        frecuencia.isBlank() -> EmpleadoValidation(false,
+            "Selecione una Frecuencia de la lista")
+        else -> EmpleadoValidation(true)
+    }
+}
+fun validateOcupacionId(ocupacionId: Int): EmpleadoValidation{
+    return when{
+        ocupacionId <= 0  -> EmpleadoValidation(false,
+            "Selecione una Ocupacion de la lista ")
         else -> EmpleadoValidation(true)
     }
 }

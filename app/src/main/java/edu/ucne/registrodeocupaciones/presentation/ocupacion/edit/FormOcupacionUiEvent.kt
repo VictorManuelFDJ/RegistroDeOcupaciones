@@ -4,6 +4,8 @@ sealed interface FormOcupacionUiEvent {
     data class Load(val id: Int?) : FormOcupacionUiEvent
     data class DescripcionChanged(val value: String) : FormOcupacionUiEvent
     data class SueldoChanged(val value: String) : FormOcupacionUiEvent
+
+    data class EsPuestoDireccionChanged(val value: Boolean): FormOcupacionUiEvent
     data object Save : FormOcupacionUiEvent
     data object Delete : FormOcupacionUiEvent
 }
