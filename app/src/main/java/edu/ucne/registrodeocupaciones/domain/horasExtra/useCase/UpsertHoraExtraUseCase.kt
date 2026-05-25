@@ -25,10 +25,6 @@ class UpsertHoraExtraUseCase @Inject constructor(
             return Result.failure(IllegalArgumentException(cantidadResult.error))
         }
 
-        val recargoResult = validateRecargo(horaExtra.recargo.toString())
-        if (!recargoResult.isValid){
-            return Result.failure(IllegalArgumentException(recargoResult.error))
-        }
         return runCatching { repository.upsert(horaExtra) }
     }
 }

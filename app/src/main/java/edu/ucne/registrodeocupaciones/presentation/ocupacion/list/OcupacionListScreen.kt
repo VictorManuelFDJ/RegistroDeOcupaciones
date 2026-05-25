@@ -50,16 +50,17 @@ fun OcupacionListBody(
 
     Scaffold(
         topBar = {
-            Row(verticalAlignment =  Alignment.CenterVertically){
-                Icon(
-                    imageVector = Icons.Default.Work,
-                    contentDescription = null,
-                    modifier = Modifier.padding(start = 12.dp)
+            TopAppBar(
+                title = {
+                    Text("Ocupacion")
+                },
+                modifier = Modifier.height(48.dp),
+                windowInsets = WindowInsets(0.dp),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
                 )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text("Ocupaciones")
-            }
-
+            )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
@@ -100,8 +101,7 @@ fun OcupacionListBody(
                         ){ ocupacion -> 
                             OcupacionItems(
                                 ocupacion = ocupacion,
-                                onEdit = { onEditOcupacion(ocupacion.ocupacionId) },
-                                onDelete = { onEvent(OcupacionListUiEvent.Delete(ocupacion.ocupacionId)) }
+                                onEdit = { onEditOcupacion(ocupacion.ocupacionId) }
                             )
                         }
                     }
@@ -114,7 +114,6 @@ fun OcupacionListBody(
 fun OcupacionItems(
     ocupacion: Ocupacion,
     onEdit: () -> Unit,
-    onDelete: () -> Unit
 ){
     ElevatedCard(
         modifier = Modifier
@@ -138,15 +137,7 @@ fun OcupacionItems(
                     color = MaterialTheme.colorScheme.primary
                 )
             }
-            IconButton(
-                onClick = onDelete,
-                modifier = Modifier.testTag("btn_delete_${ocupacion.ocupacionId}")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Eliminar Ocupacion"
-                )
-            }
+
         }
     }
 }

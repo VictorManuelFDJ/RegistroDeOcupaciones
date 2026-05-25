@@ -53,16 +53,17 @@ fun EmpleadoListBody(
 
     Scaffold(
         topBar = {
-            Row(verticalAlignment =  Alignment.CenterVertically){
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = null,
-                    modifier = Modifier.padding(start = 12.dp)
+            TopAppBar(
+                title = {
+                    Text("Empleado")
+                },
+                modifier = Modifier.height(48.dp),
+                windowInsets = WindowInsets(0.dp),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
                 )
-                Spacer(modifier = Modifier.width(12.dp))
-                 Text("Empleados")
-            }
-
+            )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
@@ -109,8 +110,7 @@ fun EmpleadoListBody(
                         ) { empleado ->
                             EmpleadoItems(
                                 empleado = empleado,
-                                onEdit = { onEditEmpleado(empleado.empleadoId) },
-                                onDelete = { onEvent(EmpleadoListUiEvent.Delete(empleado.empleadoId)) }
+                                onEdit = { onEditEmpleado(empleado.empleadoId) }
                             )
                         }
                     }
@@ -123,8 +123,7 @@ fun EmpleadoListBody(
 @Composable
 fun EmpleadoItems(
     empleado: Empleado,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onEdit: () -> Unit
 ) {
     val formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val fechaFormateada = empleado.fechaIngreso.format(formateador)
@@ -161,15 +160,6 @@ fun EmpleadoItems(
                     text = "Frecuencia: ${empleado.frecuenciaDePago}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            IconButton(
-                onClick = onDelete,
-                modifier = Modifier.testTag("btn_delete_${empleado.empleadoId}")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Eliminar Empleado"
                 )
             }
         }

@@ -52,6 +52,8 @@ class FormOcupacionViewModel @Inject constructor(
             is FormOcupacionUiEvent.EsPuestoDireccionChanged -> _state.update {
                 it.copy(esPuestoDireccion = event.value)
             }
+            FormOcupacionUiEvent.ClearError  -> _state.update { it.copy(errorMessage = null) }
+            FormOcupacionUiEvent.Delete -> onDelete()
 
             FormOcupacionUiEvent.Save -> onSave()
             FormOcupacionUiEvent.Delete -> onDelete()
@@ -138,8 +140,16 @@ class FormOcupacionViewModel @Inject constructor(
         val id = state.value.ocupacionId ?: return
         viewModelScope.launch {
             _state.update { it.copy(isDeleting = true) }
-            deleteOcupacionUseCase(id)
-            _state.update { it.copy(isDeleting = false, deleted = true) }
+            try {
+                deleteOcupacionUseCase(id)
+                _state.update { it.copy(isDeleting = false, deleted = true) }
+            }catch (e: Exception){
+                _state.update { it.copy(
+                    isDeleting = false,
+                    errorMessage = "Esta ocupacion esta en uso, primero deja de usarla"
+                    ) }
+            }
+
         }
     }
 

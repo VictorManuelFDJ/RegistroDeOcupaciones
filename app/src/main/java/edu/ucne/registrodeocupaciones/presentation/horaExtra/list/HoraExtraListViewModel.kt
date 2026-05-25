@@ -3,6 +3,7 @@ package edu.ucne.registrodeocupaciones.presentation.horaExtra.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import edu.ucne.registrodeocupaciones.domain.empleado.useCase.ObserveEmpleadoUseCase
 import edu.ucne.registrodeocupaciones.domain.horasExtra.useCase.DeleteHoraExtraUseCase
 import edu.ucne.registrodeocupaciones.domain.horasExtra.useCase.ObserveHoraExtraUseCase
 import edu.ucne.registrodeocupaciones.presentation.empleado.list.EmpleadoListUiEvent
@@ -12,17 +13,20 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 @HiltViewModel
-class HoraExtraListViewModel(
+class HoraExtraListViewModel @Inject constructor(
     private val ObserveHoraExtraUseCase: ObserveHoraExtraUseCase,
-    private val DeleteHorasExtaUseCase: DeleteHoraExtraUseCase
+    private val DeleteHorasExtaUseCase: DeleteHoraExtraUseCase,
+    private val observeEmpleadosUseCase: ObserveEmpleadoUseCase
 ): ViewModel() {
     private val _state = MutableStateFlow(HoraExtraListUiState(isLoading = true))
     val state: StateFlow<HoraExtraListUiState> = _state.asStateFlow()
 
     init {
         loadHoraExtra()
+        loadEmpleados()
     }
 
     fun onEvent(event: HoraExtraListUiEvent){
@@ -49,6 +53,13 @@ class HoraExtraListViewModel(
                         message = null
                     )
                 }
+            }
+        }
+    }
+    private fun loadEmpleados() {
+        viewModelScope.launch {
+            observeEmpleadosUseCase().collectLatest { lista ->
+                _state.update { it.copy(empleados = lista) }
             }
         }
     }

@@ -26,4 +26,6 @@ interface HorasExtraDao {
 
     @Query("Select exists(Select 1 From horasExtras WHERE horaExtraId = :id )")
     suspend fun exists(id: Int): Boolean
+
+
 }

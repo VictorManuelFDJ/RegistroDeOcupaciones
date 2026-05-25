@@ -40,11 +40,9 @@ class FormEmpleadoViewModel @Inject constructor(
 
     init {
         loadEmpleado(empleadoId)
-    }
-
-    init {
         loadOcupacion()
     }
+
     fun onEvent(event: FormEmpleadoUiEvent){
         when(event){
             is FormEmpleadoUiEvent.NombreChanged -> _state.update {
@@ -90,7 +88,6 @@ class FormEmpleadoViewModel @Inject constructor(
                         fechaIngreso = empleado.fechaIngreso,
                         frecuenciaDePago = empleado.frecuenciaDePago,
                         ocupacionId = empleado.ocupacionId
-
                     )
                 }
             }else{

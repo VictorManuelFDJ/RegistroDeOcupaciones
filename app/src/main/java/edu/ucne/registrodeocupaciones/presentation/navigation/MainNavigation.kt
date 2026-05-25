@@ -9,6 +9,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import edu.ucne.registrodeocupaciones.presentation.empleado.edit.FormEmpleadoScreen
 import edu.ucne.registrodeocupaciones.presentation.empleado.list.EmpleadoListScreen
+import edu.ucne.registrodeocupaciones.presentation.horaExtra.edit.FormHoraExtraSreen
+import edu.ucne.registrodeocupaciones.presentation.horaExtra.list.HoraExtraListScreen
 import edu.ucne.registrodeocupaciones.presentation.ocupacion.edit.FormOcupacionScreen
 import edu.ucne.registrodeocupaciones.presentation.ocupacion.list.OcupacionListScreen
 
@@ -54,6 +56,24 @@ fun MainNavigation(
 
         composable<Screen.EmpleadoForm> {
             FormEmpleadoScreen(
+                onBack = {
+                    navController.navigateUp()
+                }
+            )
+        }
+
+        composable<Screen.HoraExtraList>{
+            HoraExtraListScreen(
+                onAddHoraExtra = {
+                    navController.navigate(Screen.HoraExtraForm())
+                },
+                onEditHoraExtra = {id ->
+                    navController.navigate(Screen.HoraExtraForm(horaExtraId = id))
+                }
+            )
+        }
+        composable<Screen.HoraExtraForm>{
+            FormHoraExtraSreen(
                 onBack = {
                     navController.navigateUp()
                 }

@@ -6,8 +6,10 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -28,6 +30,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -69,15 +73,17 @@ fun HoraExtraListBody(
 
     Scaffold(
         topBar = {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Icon(
-                    imageVector = Icons.Default.AccessTime,
-                    contentDescription = null,
-                    modifier = Modifier.padding(start = 12.dp)
+            TopAppBar(
+                title = {
+                    Text("Horas Extras")
+                },
+                modifier = Modifier.height(48.dp),
+                windowInsets = WindowInsets(0.dp),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
                 )
-                Spacer(modifier = Modifier.width(12.dp))
-                Text("Hora Extra")
-            }
+            )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
@@ -123,10 +129,13 @@ fun HoraExtraListBody(
                         items(
                             items = state.horasExtras,
                             key = {it.horaExtraId}
-                        ){horaExtra -> HoraExtraItem(
+                        ){horaExtra ->
+                            val empleadoEncontrado = state.empleados.find { it.empleadoId == horaExtra.empleadoId }
+                            val nombreAMostrar = empleadoEncontrado?.nombre ?: "Empleado Desconocido"
+                            HoraExtraItem(
                             horaExtra = horaExtra,
-                            onEdit = { onEditHoraExtra(horaExtra.horaExtraId) },
-                            onDelete = { onEvent(HoraExtraListUiEvent.Delete(horaExtra.horaExtraId))}
+                            nombreEmpleado = nombreAMostrar,
+                            onEdit = { onEditHoraExtra(horaExtra.horaExtraId) }
                         )}
                     }
                 }
@@ -139,8 +148,9 @@ fun HoraExtraListBody(
 @Composable
 fun HoraExtraItem(
     horaExtra: HoraExtra,
+    nombreEmpleado: String,
     onEdit: () -> Unit,
-    onDelete: () -> Unit
+
 ){
     val formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val fechaFormateada = horaExtra.fecha.format(formateador)
@@ -165,7 +175,7 @@ fun HoraExtraItem(
             Spacer(modifier = Modifier.width(16.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(
-                    text = "Empleado ID: ${horaExtra.empleadoId}",
+                    text = nombreEmpleado,
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
@@ -177,15 +187,6 @@ fun HoraExtraItem(
                     text = "Total a pagar: RD$ ${horaExtra.recargo}",
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-            }
-            IconButton(
-                onClick = onDelete,
-                modifier = Modifier.testTag("btn_delete_hora${horaExtra.horaExtraId}")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Eliminar Hora Extra"
                 )
             }
         }
