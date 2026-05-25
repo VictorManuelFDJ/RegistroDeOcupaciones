@@ -1,5 +1,6 @@
 package edu.ucne.registrodeocupaciones.domain.horasExtra.useCase
 
+import edu.ucne.registrodeocupaciones.data.horasExtra.local.TipoHoraExtra
 import edu.ucne.registrodeocupaciones.domain.empleado.useCase.EmpleadoValidation
 
 data class HoraExtraValidation(
@@ -35,21 +36,30 @@ fun validateCantidadHora(horasCantidad: String): HoraExtraValidation{
             "Ingresa un numero valido para la cantidad de horas")
         horas <= 0 -> HoraExtraValidation(false,
             "La cantidad de hora tiene que ser mayor de cero ")
-        horas > 24 -> HoraExtraValidation(false,
-            "El dia solo tiene 24 horas, verifica la cantidad ")
         else -> HoraExtraValidation(true)
     }
 }
 
-fun validateRecargo(recargoHoras: String): HoraExtraValidation{
-    val recargo = recargoHoras.toDoubleOrNull()
+fun validateTipoHora(
+    tipoSelecionado: TipoHoraExtra?,
+    horasInput: String,
+
+): HoraExtraValidation{
+    val horasNuevas = horasInput.toIntOrNull()?: 0
+    val totalHoras = horasNuevas
+    val limiteHorasExtrasNormales = 24
+
     return when{
-        recargoHoras.isBlank() -> HoraExtraValidation(false,
-            "El recargo no puede esta vacio")
-        recargo == null -> HoraExtraValidation(false,
-            "Ingresa un monto de recargo válido")
-        recargo < 0.0 -> HoraExtraValidation(false,
-            "El recargo no puede ser negativo")
+        tipoSelecionado == null -> HoraExtraValidation(
+            isValid = false,
+            error = "Debe seleccionar un tipo de hora extra"
+        )
+        totalHoras > limiteHorasExtrasNormales && tipoSelecionado != TipoHoraExtra.ALTA_VOLUMEN ->{
+            HoraExtraValidation(
+                isValid = false,
+                error = "Al pasar de 24h extras (68h totales), la ley exige usar 'Alto Volumen'."
+            )
+        }
         else -> HoraExtraValidation(true)
     }
 }

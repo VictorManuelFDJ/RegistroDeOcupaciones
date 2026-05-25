@@ -3,6 +3,7 @@ package edu.ucne.registrodeocupaciones.presentation.empleado.edit
 import android.R.attr.text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -10,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
@@ -42,6 +44,7 @@ import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import edu.ucne.registrodeocupaciones.data.empleado.local.FrecuenciaDePago
 import edu.ucne.registrodeocupaciones.domain.empleado.useCase.opcionesValidas
+import edu.ucne.registrodeocupaciones.presentation.ocupacion.edit.FormOcupacionUiEvent
 import java.time.Instant
 import java.time.ZoneId
 
@@ -61,18 +64,36 @@ fun FormEmpleadoScreen(
     var expandedOcupacion by remember { mutableStateOf(false) }
 
 
-    LaunchedEffect(state.saved) {
-        if (state.saved){
+    LaunchedEffect(state.saved, state.deleted) {
+        if (state.saved || state.deleted){
             onBack()
         }
     }
     Scaffold(
         topBar = {
         TopAppBar(
-            title = { Text(if (state.isNew)"Nuevo Empleado" else "Editar Empleado") },
-            navigationIcon = { IconButton(onClick = onBack){
+            title = { Text(if (state.isNew)"Nuevo Empleado" else "Editar Empleado",
+                style = MaterialTheme.typography.titleMedium
+                ) },
+            windowInsets = WindowInsets(0.dp),
+            navigationIcon = {
+                IconButton(onClick = onBack){
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atras")
-            }
+                }
+            },
+            actions = {
+                if(!state.isNew){
+                    IconButton(
+                        onClick = {viewModel.onEvent(FormEmpleadoUiEvent.Delete)},
+                        modifier = Modifier.testTag("btn_delete")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Eliminar Ocupacion",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             }
         )
     }
@@ -262,7 +283,6 @@ fun FormEmpleadoScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 singleLine = true
             )
-
             Button(
                 onClick = {viewModel.onEvent(FormEmpleadoUiEvent.Save)},
                 modifier = Modifier
@@ -279,6 +299,7 @@ fun FormEmpleadoScreen(
                     Text("Guardar")
                 }
             }
+
         }
     }
 }

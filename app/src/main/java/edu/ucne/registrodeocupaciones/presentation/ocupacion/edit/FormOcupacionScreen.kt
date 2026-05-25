@@ -1,5 +1,6 @@
 package edu.ucne.registrodeocupaciones.presentation.ocupacion.edit
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
@@ -15,6 +17,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
@@ -29,24 +32,51 @@ fun FormOcupacionScreen(
     onBack: () -> Unit
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
-    LaunchedEffect(state.saved) {
-        if(state.saved){
+    LaunchedEffect(state.saved, state.deleted) {
+        if(state.saved || state.deleted){
             onBack()
         }
     }
 
+    LaunchedEffect(state.errorMessage) {
+        state.errorMessage?.let {  mensaje ->
+            Toast.makeText(context,mensaje, Toast.LENGTH_LONG).show()
+            viewModel.onEvent(FormOcupacionUiEvent.ClearError)
+        }
+    }
+
+
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(if (state.ocupacionId == null || state.ocupacionId == 0) "Nueva Ocupación" else "Editar Ocupación") },
+                title = { Text(if (state.ocupacionId == null || state.ocupacionId == 0) "Nueva Ocupación" else "Editar Ocupación",
+                    style = MaterialTheme.typography.titleMedium
+                    ) },
+                windowInsets = WindowInsets(0.dp),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atras")
                     }
+                },
+                actions = {
+                    if(!state.isNew){
+                        IconButton(
+                            onClick = {viewModel.onEvent(FormOcupacionUiEvent.Delete)},
+                            modifier = Modifier.testTag("btn_delete")
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Delete,
+                                contentDescription = "Eliminar Ocupacion",
+                                tint = MaterialTheme.colorScheme.error
+                            )
+                        }
+                    }
                 }
             )
         }
+
     ) { padding ->
         Column(
             modifier = Modifier
@@ -114,6 +144,7 @@ fun FormOcupacionScreen(
                     )
                 }
             }
+
             Button(
                 onClick = { viewModel.onEvent(FormOcupacionUiEvent.Save) },
                 modifier = Modifier
