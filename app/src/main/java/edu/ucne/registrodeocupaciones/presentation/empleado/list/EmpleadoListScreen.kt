@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import edu.ucne.registrodeocupaciones.data.empleado.local.FrecuenciaDePago
 import edu.ucne.registrodeocupaciones.domain.empleado.model.Empleado
 import java.time.format.DateTimeFormatter
 
@@ -52,16 +53,17 @@ fun EmpleadoListBody(
 
     Scaffold(
         topBar = {
-            Row(verticalAlignment =  Alignment.CenterVertically){
-                Icon(
-                    imageVector = Icons.Default.Person,
-                    contentDescription = null,
-                    modifier = Modifier.padding(start = 12.dp)
+            TopAppBar(
+                title = {
+                    Text("Empleado")
+                },
+                modifier = Modifier.height(48.dp),
+                windowInsets = WindowInsets(0.dp),
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    titleContentColor = MaterialTheme.colorScheme.onPrimary
                 )
-                Spacer(modifier = Modifier.width(12.dp))
-                 Text("Empleados")
-            }
-
+            )
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
         floatingActionButton = {
@@ -108,8 +110,7 @@ fun EmpleadoListBody(
                         ) { empleado ->
                             EmpleadoItems(
                                 empleado = empleado,
-                                onEdit = { onEditEmpleado(empleado.empleadoId) },
-                                onDelete = { onEvent(EmpleadoListUiEvent.Delete(empleado.empleadoId)) }
+                                onEdit = { onEditEmpleado(empleado.empleadoId) }
                             )
                         }
                     }
@@ -122,8 +123,7 @@ fun EmpleadoListBody(
 @Composable
 fun EmpleadoItems(
     empleado: Empleado,
-    onEdit: () -> Unit,
-    onDelete: () -> Unit
+    onEdit: () -> Unit
 ) {
     val formateador = DateTimeFormatter.ofPattern("dd/MM/yyyy")
     val fechaFormateada = empleado.fechaIngreso.format(formateador)
@@ -156,14 +156,10 @@ fun EmpleadoItems(
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
-            }
-            IconButton(
-                onClick = onDelete,
-                modifier = Modifier.testTag("btn_delete_${empleado.empleadoId}")
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Delete,
-                    contentDescription = "Eliminar Empleado"
+                Text(
+                    text = "Frecuencia: ${empleado.frecuenciaDePago}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
         }
@@ -182,7 +178,9 @@ private fun EmpleadoListBodyPreview() {
                     nombre = "Juan Perez",
                     sueldo = 25000.0,
                     fechaIngreso = java.time.LocalDate.now(),
-                    sexo = "M"
+                    sexo = "M",
+                    frecuenciaDePago = FrecuenciaDePago.MENSUAL,
+                    ocupacionId = 1
                 )
             )
         )

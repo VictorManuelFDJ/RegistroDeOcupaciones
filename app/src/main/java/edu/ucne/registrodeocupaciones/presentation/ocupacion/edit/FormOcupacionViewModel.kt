@@ -49,6 +49,11 @@ class FormOcupacionViewModel @Inject constructor(
             is FormOcupacionUiEvent.SueldoChanged -> _state.update {
                 it.copy(sueldo = event.value, sueldoError = null)
             }
+            is FormOcupacionUiEvent.EsPuestoDireccionChanged -> _state.update {
+                it.copy(esPuestoDireccion = event.value)
+            }
+            FormOcupacionUiEvent.ClearError  -> _state.update { it.copy(errorMessage = null) }
+            FormOcupacionUiEvent.Delete -> onDelete()
 
             FormOcupacionUiEvent.Save -> onSave()
             FormOcupacionUiEvent.Delete -> onDelete()
@@ -69,7 +74,8 @@ class FormOcupacionViewModel @Inject constructor(
                         isNew = false,
                         ocupacionId = ocupacion.ocupacionId,
                         descripcion = ocupacion.descripcion,
-                        sueldo = ocupacion.sueldo.toString()
+                        sueldo = ocupacion.sueldo.toString(),
+                        esPuestoDireccion = ocupacion.esPuestoDireccion
                     )
                 }
             }else{
@@ -106,7 +112,8 @@ class FormOcupacionViewModel @Inject constructor(
             val ocupacion = Ocupacion(
                 ocupacionId = state.value.ocupacionId ?: 0,
                 descripcion = descripcion,
-                sueldo = state.value.sueldo.toDouble()
+                sueldo = state.value.sueldo.toDouble(),
+                esPuestoDireccion = state.value.esPuestoDireccion
             )
 
             val result = upsertOcupacionUseCase(ocupacion)
@@ -133,8 +140,16 @@ class FormOcupacionViewModel @Inject constructor(
         val id = state.value.ocupacionId ?: return
         viewModelScope.launch {
             _state.update { it.copy(isDeleting = true) }
-            deleteOcupacionUseCase(id)
-            _state.update { it.copy(isDeleting = false, deleted = true) }
+            try {
+                deleteOcupacionUseCase(id)
+                _state.update { it.copy(isDeleting = false, deleted = true) }
+            }catch (e: Exception){
+                _state.update { it.copy(
+                    isDeleting = false,
+                    errorMessage = "Esta ocupacion esta en uso, primero deja de usarla"
+                    ) }
+            }
+
         }
     }
 

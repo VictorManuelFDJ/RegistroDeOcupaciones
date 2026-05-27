@@ -32,6 +32,16 @@ class UpsertEmpleadoUseCase @Inject constructor(
         if(!sueldoResult.isValid){
             return Result.failure(IllegalArgumentException(sueldoResult.error))
         }
+
+        val frecuenciaResult = validateFrecuenciaPago(empleado.frecuenciaDePago.toString())
+        if(!frecuenciaResult.isValid){
+            return Result.failure(IllegalArgumentException(frecuenciaResult.error))
+        }
+
+        val ocupacionResult = validateOcupacionId(empleado.ocupacionId)
+        if(!ocupacionResult.isValid){
+            return Result.failure(IllegalArgumentException(ocupacionResult.error))
+        }
         return runCatching{repository.upsert(empleado)}
 
     }

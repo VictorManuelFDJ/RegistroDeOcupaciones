@@ -13,15 +13,15 @@ import edu.ucne.registrodeocupaciones.domain.empleado.useCase.validateFecha
 import edu.ucne.registrodeocupaciones.domain.empleado.useCase.validateNombre
 import edu.ucne.registrodeocupaciones.domain.empleado.useCase.validateSexo
 import edu.ucne.registrodeocupaciones.domain.empleado.useCase.validateSueldoE
-import edu.ucne.registrodeocupaciones.presentation.empleado.list.EmpleadoListUiEvent
-import edu.ucne.registrodeocupaciones.presentation.empleado.edit.FormEmpleadoUiState
+import edu.ucne.registrodeocupaciones.domain.ocupacion.useCase.ObserveOcupacionesUseCase
+import kotlinx.coroutines.flow.collectLatest
 import edu.ucne.registrodeocupaciones.presentation.navigation.Screen
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlinx.serialization.Serializable
+
 import javax.inject.Inject
 
 @HiltViewModel
@@ -29,15 +29,20 @@ class FormEmpleadoViewModel @Inject constructor(
     private val getEmpleadoUseCase: GetEmpleadoUseCase,
     private val upsertEmpleadoUseCase: UpsertEmpleadoUseCase,
     private val deleteEmpleadoUseCase: DeleteEmpleadoUseCase,
+    private val observeOcupacionesUseCase: ObserveOcupacionesUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel(){
+
     private val routerArgs = savedStateHandle.toRoute<Screen.EmpleadoForm>()
     private val empleadoId: Int = routerArgs.empleadoId
     private val  _state = MutableStateFlow(FormEmpleadoUiState())
     val state: StateFlow<FormEmpleadoUiState> = _state.asStateFlow()
+
     init {
         loadEmpleado(empleadoId)
+        loadOcupacion()
     }
+
     fun onEvent(event: FormEmpleadoUiEvent){
         when(event){
             is FormEmpleadoUiEvent.NombreChanged -> _state.update {
@@ -48,8 +53,21 @@ class FormEmpleadoViewModel @Inject constructor(
                 it.copy(sueldo = event.value, sueldoError = null)}
             is FormEmpleadoUiEvent.FechaIngresoChanged -> _state.update {
                 it.copy(fechaIngreso = event.value, fechaError = null)}
+            is FormEmpleadoUiEvent.FrecuenciaDePagoChanged -> _state.update {
+                it.copy(frecuenciaDePago = event.value, frecuenciaDePagoError = null)
+            }
+            is FormEmpleadoUiEvent.OcupacionIdChanged -> _state.update {
+                it.copy(ocupacionId = event.value, ocupacionError = null)
+            }
             FormEmpleadoUiEvent.Save -> onSave()
             FormEmpleadoUiEvent.Delete -> onDelete()
+        }
+    }
+    private fun loadOcupacion(){
+        viewModelScope.launch {
+            observeOcupacionesUseCase().collectLatest { listaOcupacion ->
+                _state.update { it.copy(ocupacionDisponible = listaOcupacion ) }
+            }
         }
     }
     private fun loadEmpleado(id: Int?){
@@ -67,7 +85,9 @@ class FormEmpleadoViewModel @Inject constructor(
                         nombre = empleado.nombre,
                         sexo = empleado.sexo,
                         sueldo = empleado.sueldo.toString(),
-                        fechaIngreso = empleado.fechaIngreso
+                        fechaIngreso = empleado.fechaIngreso,
+                        frecuenciaDePago = empleado.frecuenciaDePago,
+                        ocupacionId = empleado.ocupacionId
                     )
                 }
             }else{
@@ -102,7 +122,10 @@ class FormEmpleadoViewModel @Inject constructor(
                 nombre = state.value.nombre.trim(),
                 sexo = state.value.sexo.trim(),
                 sueldo = state.value.sueldo.toDouble(),
-                fechaIngreso = state.value.fechaIngreso
+                fechaIngreso = state.value.fechaIngreso,
+                frecuenciaDePago = state.value.frecuenciaDePago,
+                ocupacionId = state.value.ocupacionId ?: 0
+
             )
             val result = upsertEmpleadoUseCase(empleado)
             result.onSuccess { newId ->

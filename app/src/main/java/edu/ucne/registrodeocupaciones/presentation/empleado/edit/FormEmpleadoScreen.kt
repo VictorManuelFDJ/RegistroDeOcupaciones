@@ -1,7 +1,9 @@
 package edu.ucne.registrodeocupaciones.presentation.empleado.edit
 
+import android.R.attr.text
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -9,6 +11,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.DateRange
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DatePicker
@@ -39,7 +42,9 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import edu.ucne.registrodeocupaciones.data.empleado.local.FrecuenciaDePago
 import edu.ucne.registrodeocupaciones.domain.empleado.useCase.opcionesValidas
+import edu.ucne.registrodeocupaciones.presentation.ocupacion.edit.FormOcupacionUiEvent
 import java.time.Instant
 import java.time.ZoneId
 
@@ -55,19 +60,40 @@ fun FormEmpleadoScreen(
     val datePickerState = rememberDatePickerState()
 
     var expandedSexo by remember { mutableStateOf(false) }
+    var expandedFrecuencia by remember { mutableStateOf(false) }
+    var expandedOcupacion by remember { mutableStateOf(false) }
 
-    LaunchedEffect(state.saved) {
-        if (state.saved){
+
+    LaunchedEffect(state.saved, state.deleted) {
+        if (state.saved || state.deleted){
             onBack()
         }
     }
     Scaffold(
         topBar = {
         TopAppBar(
-            title = { Text(if (state.isNew)"Nuevo Empleado" else "Editar Empleado") },
-            navigationIcon = { IconButton(onClick = onBack){
+            title = { Text(if (state.isNew)"Nuevo Empleado" else "Editar Empleado",
+                style = MaterialTheme.typography.titleMedium
+                ) },
+            windowInsets = WindowInsets(0.dp),
+            navigationIcon = {
+                IconButton(onClick = onBack){
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atras")
-            }
+                }
+            },
+            actions = {
+                if(!state.isNew){
+                    IconButton(
+                        onClick = {viewModel.onEvent(FormEmpleadoUiEvent.Delete)},
+                        modifier = Modifier.testTag("btn_delete")
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Eliminar Ocupacion",
+                            tint = MaterialTheme.colorScheme.error
+                        )
+                    }
+                }
             }
         )
     }
@@ -147,6 +173,78 @@ fun FormEmpleadoScreen(
                 supportingText = state.fechaError?.let { { Text(it) } },
                 singleLine = true
             )
+            ExposedDropdownMenuBox(
+                expanded = expandedFrecuencia,
+                onExpandedChange = {expandedFrecuencia = it}
+            ) {
+                OutlinedTextField(
+                    value = state.frecuenciaDePago.mensaje,
+                    onValueChange = {},
+                    readOnly = true,
+                    label = {Text("Frecuencia de Pago")},
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedFrecuencia)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                        .testTag("input_frecuencia"),
+                    isError = state.frecuenciaDePagoError != null,
+                    supportingText = state.frecuenciaDePagoError?.let{ { Text(it) } },
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedFrecuencia,
+                    onDismissRequest = {expandedFrecuencia = false}
+                ) {
+                    FrecuenciaDePago.entries.forEach { frecuencia ->
+                        DropdownMenuItem(
+                            text = {Text(frecuencia.mensaje)},
+                            onClick = {
+                                viewModel.onEvent(FormEmpleadoUiEvent.FrecuenciaDePagoChanged(frecuencia))
+                                expandedFrecuencia = false
+                            }
+                        )
+                    }
+                }
+            }
+
+            ExposedDropdownMenuBox(
+                expanded = expandedOcupacion,
+                onExpandedChange = {expandedOcupacion = it}
+            ) {
+                OutlinedTextField(
+                    value = state.ocupacionDisponible
+                        .find { it.ocupacionId == state.ocupacionId}
+                        ?.descripcion?: "Selecione ocupacion",
+                    onValueChange = {},
+                    readOnly = true,
+                    label = {Text("Ocupacion ")},
+                    trailingIcon = {
+                        ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedOcupacion)
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .menuAnchor(ExposedDropdownMenuAnchorType.PrimaryNotEditable)
+                        .testTag("input_Ocupacion"),
+                    isError = state.ocupacionError != null,
+                    supportingText = state.ocupacionError?.let { {Text(it) } },
+                )
+                ExposedDropdownMenu(
+                    expanded = expandedOcupacion,
+                    onDismissRequest = {expandedOcupacion = false}
+                ) {
+                    state.ocupacionDisponible.forEach { ocupacion ->
+                        DropdownMenuItem(
+                            text = {Text(ocupacion.descripcion)},
+                            onClick = {
+                                viewModel.onEvent(FormEmpleadoUiEvent.OcupacionIdChanged(ocupacion.ocupacionId))
+                                expandedOcupacion = false
+                            }
+                        )
+                    }
+                }
+            }
+
             if(showDatePicker){
                 DatePickerDialog(
                     onDismissRequest = {showDatePicker = false},
@@ -185,7 +283,6 @@ fun FormEmpleadoScreen(
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                 singleLine = true
             )
-
             Button(
                 onClick = {viewModel.onEvent(FormEmpleadoUiEvent.Save)},
                 modifier = Modifier
@@ -202,8 +299,6 @@ fun FormEmpleadoScreen(
                     Text("Guardar")
                 }
             }
-
-
 
         }
     }
