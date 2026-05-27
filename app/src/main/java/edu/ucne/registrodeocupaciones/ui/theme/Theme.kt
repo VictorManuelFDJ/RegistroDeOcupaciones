@@ -45,7 +45,7 @@ private val TemaOscuroElegante = darkColorScheme(
 
 @Composable
 fun RegistroDeOcupacionesTheme(
-    temaSeleccionado: TemaApp = TemaApp.OSCURO_ELEGANTE,
+    temaSeleccionado: TemaApp = TemaApp.ESMERALDA,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when (temaSeleccionado) {

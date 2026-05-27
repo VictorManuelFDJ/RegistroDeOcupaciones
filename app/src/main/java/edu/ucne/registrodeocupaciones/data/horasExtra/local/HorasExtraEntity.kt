@@ -14,7 +14,7 @@ import java.time.LocalDate
             entity = EmpleadosEntity::class,
             parentColumns = ["empleadoId"],
             childColumns = ["empleadoId"],
-            onDelete = ForeignKey.RESTRICT
+            onDelete = ForeignKey.CASCADE
         )
     ],
     indices = [Index("empleadoId")]
