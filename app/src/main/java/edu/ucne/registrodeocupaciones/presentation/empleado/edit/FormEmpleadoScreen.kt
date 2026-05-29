@@ -51,6 +51,7 @@ import java.time.ZoneId
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormEmpleadoScreen(
+    empleadoId: Int,
     viewModel: FormEmpleadoViewModel = hiltViewModel(),
     onBack: () -> Unit
 ){
@@ -63,7 +64,9 @@ fun FormEmpleadoScreen(
     var expandedFrecuencia by remember { mutableStateOf(false) }
     var expandedOcupacion by remember { mutableStateOf(false) }
 
-
+    LaunchedEffect(key1 = empleadoId) {
+        viewModel.loadEmpleado(empleadoId)
+    }
     LaunchedEffect(state.saved, state.deleted) {
         if (state.saved || state.deleted){
             onBack()
