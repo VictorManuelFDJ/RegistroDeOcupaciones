@@ -1,6 +1,7 @@
 package edu.ucne.registrodeocupaciones.presentation.ocupacion.adaptive
 
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
@@ -27,7 +28,8 @@ fun OcupacionesAdaptiveScreen(){
         directive = navigator.scaffoldDirective,
         value = navigator.scaffoldValue,
         listPane = {
-            OcupacionListScreen(
+            AnimatedPane {
+                OcupacionListScreen(
                 onAddOcupacion = {
                     selectedOcupacionId = 0
                     scope.launch {
@@ -41,16 +43,20 @@ fun OcupacionesAdaptiveScreen(){
                     }
                 }
             )
+            }
         },
         detailPane = {
-            FormOcupacionScreen(
-                ocupacionId = selectedOcupacionId,
-                onBack = {
-                    scope.launch {
-                        navigator.navigateBack()
+            AnimatedPane {
+                FormOcupacionScreen(
+                    ocupacionId = selectedOcupacionId,
+                    onBack = {
+                        scope.launch {
+                            navigator.navigateBack()
+                        }
                     }
-                }
-            )
+                )
+            }
+
         }
     )
 

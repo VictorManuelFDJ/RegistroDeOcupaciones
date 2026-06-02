@@ -1,6 +1,7 @@
 package edu.ucne.registrodeocupaciones.presentation.horaExtra.adaptive
 
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
@@ -26,7 +27,8 @@ fun HorasExtraAdaptiveScreen(){
         directive = navigator.scaffoldDirective,
         value = navigator.scaffoldValue,
         listPane = {
-            HoraExtraListScreen(
+            AnimatedPane {
+                HoraExtraListScreen(
                 onAddHoraExtra = {
                     selectedHoraExtraId = 0
                     scope.launch {
@@ -39,17 +41,22 @@ fun HorasExtraAdaptiveScreen(){
                         navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
                     }
                 }
-            )
+              )
+            }
+
         },
         detailPane = {
-            FormHoraExtraScreen(
-                horaExtraId = selectedHoraExtraId,
-                onBack = {
-                   scope.launch {
-                       navigator.navigateBack()
-                   }
-                }
-            )
+            AnimatedPane {
+                FormHoraExtraScreen(
+                    horaExtraId = selectedHoraExtraId,
+                    onBack = {
+                        scope.launch {
+                            navigator.navigateBack()
+                        }
+                    }
+                )
+            }
+
         }
     )
 }

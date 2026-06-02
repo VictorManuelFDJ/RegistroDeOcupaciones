@@ -1,6 +1,7 @@
 package edu.ucne.registrodeocupaciones.presentation.navigation
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,7 +25,6 @@ fun MainNavigation(
         startDestination = Screen.OcupacionList,
         modifier = Modifier.padding(innerPadding)
     ) {
-
         composable<Screen.OcupacionList>{
             OcupacionesAdaptiveScreen()
         }
@@ -34,15 +34,5 @@ fun MainNavigation(
         composable<Screen.HoraExtraList>{
             HorasExtraAdaptiveScreen()
         }
-
-
-
-
-
-
-
-
-
-
     }
 }

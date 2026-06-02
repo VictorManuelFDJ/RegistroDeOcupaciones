@@ -60,9 +60,7 @@ class FormEmpleadoViewModel @Inject constructor(
             FormEmpleadoUiEvent.Delete -> onDelete()
         }
     }
-    fun nuevoRegistro() {
-        _state.value = FormEmpleadoUiState()
-    }
+
     private fun loadOcupacion(){
         viewModelScope.launch {
             observeOcupacionesUseCase().collectLatest { listaOcupacion ->
@@ -72,7 +70,6 @@ class FormEmpleadoViewModel @Inject constructor(
     }
     fun loadEmpleado(id: Int){
         if( id == 0 ){
-
             val ocupaciones = _state.value.ocupacionDisponible
             _state.value = FormEmpleadoUiState(ocupacionDisponible = ocupaciones)
             return

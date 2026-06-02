@@ -55,7 +55,6 @@ fun FormHoraExtraScreen(
             TopAppBar(
                 title = { Text(if (state.isNew)"Registrar Horas Extras" else "Editar Horas Extras",
                     style = MaterialTheme.typography.titleMedium) },
-                windowInsets = WindowInsets(0.dp),
                 navigationIcon = {
                     IconButton(onClick = onBack){
                     Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atras")

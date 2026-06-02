@@ -1,6 +1,7 @@
 package edu.ucne.registrodeocupaciones.presentation.empleado.adaptive
 
 import androidx.compose.material3.adaptive.ExperimentalMaterial3AdaptiveApi
+import androidx.compose.material3.adaptive.layout.AnimatedPane
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffold
 import androidx.compose.material3.adaptive.layout.ListDetailPaneScaffoldRole
 import androidx.compose.material3.adaptive.navigation.rememberListDetailPaneScaffoldNavigator
@@ -12,8 +13,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import edu.ucne.registrodeocupaciones.presentation.empleado.edit.FormEmpleadoScreen
 import edu.ucne.registrodeocupaciones.presentation.empleado.list.EmpleadoListScreen
-import edu.ucne.registrodeocupaciones.presentation.horaExtra.edit.FormHoraExtraScreen
-import edu.ucne.registrodeocupaciones.presentation.horaExtra.list.HoraExtraListScreen
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3AdaptiveApi::class)
@@ -27,30 +26,36 @@ fun EmpleadosAdaptiveScreen(){
         directive = navigator.scaffoldDirective,
         value = navigator.scaffoldValue,
         listPane = {
-            EmpleadoListScreen(
-                onAddEmpleado = {
-                    selectedEmpleadoId = 0
-                    scope.launch {
-                        navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+            AnimatedPane {
+                EmpleadoListScreen(
+                    onAddEmpleado = {
+                        selectedEmpleadoId = 0
+                        scope.launch {
+                            navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+                        }
+                    },
+                    onEditEmpleado = { id ->
+                        selectedEmpleadoId = id
+                        scope.launch {
+                            navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
+                        }
                     }
-                },
-                onEditEmpleado = { id ->
-                    selectedEmpleadoId = id
-                    scope.launch {
-                        navigator.navigateTo(ListDetailPaneScaffoldRole.Detail)
-                    }
-                }
-            )
+                )
+            }
+
         },
         detailPane = {
-            FormEmpleadoScreen(
-                empleadoId = selectedEmpleadoId,
-                onBack = {
-                    scope.launch {
-                        navigator.navigateBack()
+            AnimatedPane {
+                FormEmpleadoScreen(
+                    empleadoId = selectedEmpleadoId,
+                    onBack = {
+                        scope.launch {
+                            navigator.navigateBack()
+                        }
                     }
-                }
-            )
+                )
+            }
+
         }
     )
 

@@ -63,7 +63,6 @@ fun FormOcupacionScreen(
                 title = { Text(if (state.ocupacionId == null || state.ocupacionId == 0) "Nueva Ocupación" else "Editar Ocupación",
                     style = MaterialTheme.typography.titleMedium
                     ) },
-                windowInsets = WindowInsets(0.dp),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atras")

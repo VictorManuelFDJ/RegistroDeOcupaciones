@@ -78,7 +78,6 @@ fun FormEmpleadoScreen(
             title = { Text(if (state.isNew)"Nuevo Empleado" else "Editar Empleado",
                 style = MaterialTheme.typography.titleMedium
                 ) },
-            windowInsets = WindowInsets(0.dp),
             navigationIcon = {
                 IconButton(onClick = onBack){
                 Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atras")
