@@ -37,15 +37,11 @@ class FormHoraExtraViewModel @Inject constructor(
     private val deleteHoraExtraUseCase: DeleteHoraExtraUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel(){
-    private val routerArgs = savedStateHandle.toRoute<Screen.HoraExtraForm>()
-    private val horaExtraId: Int = routerArgs.horaExtraId
-
     private val _state = MutableStateFlow(FormHoraExtraUiState())
     val state: StateFlow<FormHoraExtraUiState> = _state.asStateFlow()
 
 
     init {
-        loadHoraExtra(horaExtraId)
         loadEmpleadosYOcupaciones()
     }
 
@@ -78,9 +74,14 @@ class FormHoraExtraViewModel @Inject constructor(
         }
     }
 
-    private fun loadHoraExtra(id: Int? ){
-        if(id == null || id == 0 ){
-            _state.update { it.copy(isNew = true, horaExtraId = null) }
+    fun loadHoraExtra(id: Int){
+        if(id == 0 ){
+            val empleados = _state.value.empleadoDisponibles
+            val ocupaciones = _state.value.ocupacionDisponible
+            _state.value = FormHoraExtraUiState(
+                empleadoDisponibles = empleados,
+                ocupacionDisponible = ocupaciones
+            )
             return
         }
         viewModelScope.launch {

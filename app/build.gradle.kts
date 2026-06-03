@@ -74,6 +74,15 @@ dependencies {
     implementation(libs.kotlinx.datetime)
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.5")
 
+
+    implementation(libs.compose.adaptive)
+    implementation(libs.compose.adaptive.layout)
+    implementation(libs.compose.adaptive.nav)
+    implementation("androidx.compose.material3:material3-adaptive-navigation-suite:1.3.0")
+    implementation("androidx.compose.material3:material3-window-size-class:1.3.0")
+
+
+
     // Unit Testing
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")

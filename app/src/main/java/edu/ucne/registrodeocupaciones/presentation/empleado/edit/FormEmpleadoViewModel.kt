@@ -16,6 +16,7 @@ import edu.ucne.registrodeocupaciones.domain.empleado.useCase.validateSueldoE
 import edu.ucne.registrodeocupaciones.domain.ocupacion.useCase.ObserveOcupacionesUseCase
 import kotlinx.coroutines.flow.collectLatest
 import edu.ucne.registrodeocupaciones.presentation.navigation.Screen
+import edu.ucne.registrodeocupaciones.presentation.ocupacion.edit.FormOcupacionUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,14 +33,10 @@ class FormEmpleadoViewModel @Inject constructor(
     private val observeOcupacionesUseCase: ObserveOcupacionesUseCase,
     savedStateHandle: SavedStateHandle
 ): ViewModel(){
-
-    private val routerArgs = savedStateHandle.toRoute<Screen.EmpleadoForm>()
-    private val empleadoId: Int = routerArgs.empleadoId
     private val  _state = MutableStateFlow(FormEmpleadoUiState())
     val state: StateFlow<FormEmpleadoUiState> = _state.asStateFlow()
 
     init {
-        loadEmpleado(empleadoId)
         loadOcupacion()
     }
 
@@ -63,6 +60,7 @@ class FormEmpleadoViewModel @Inject constructor(
             FormEmpleadoUiEvent.Delete -> onDelete()
         }
     }
+
     private fun loadOcupacion(){
         viewModelScope.launch {
             observeOcupacionesUseCase().collectLatest { listaOcupacion ->
@@ -70,9 +68,10 @@ class FormEmpleadoViewModel @Inject constructor(
             }
         }
     }
-    private fun loadEmpleado(id: Int?){
-        if(id == null || id == 0 ){
-            _state.update { it.copy(isNew = true, empleadoId = null) }
+    fun loadEmpleado(id: Int){
+        if( id == 0 ){
+            val ocupaciones = _state.value.ocupacionDisponible
+            _state.value = FormEmpleadoUiState(ocupacionDisponible = ocupaciones)
             return
         }
         viewModelScope.launch {

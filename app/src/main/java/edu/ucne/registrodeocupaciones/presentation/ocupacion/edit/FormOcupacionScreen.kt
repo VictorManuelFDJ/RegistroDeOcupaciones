@@ -28,11 +28,20 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun FormOcupacionScreen(
+    ocupacionId: Int,
     viewModel: FormOcupacionViewModel = hiltViewModel(),
     onBack: () -> Unit
 ){
     val state by viewModel.state.collectAsStateWithLifecycle()
     val context = LocalContext.current
+
+    LaunchedEffect(ocupacionId) {
+        if(ocupacionId > 0 ){
+            viewModel.onEvent(FormOcupacionUiEvent.Load(ocupacionId))
+        }else{
+            viewModel.nuevoRegistro()
+        }
+    }
 
     LaunchedEffect(state.saved, state.deleted) {
         if(state.saved || state.deleted){
@@ -54,7 +63,6 @@ fun FormOcupacionScreen(
                 title = { Text(if (state.ocupacionId == null || state.ocupacionId == 0) "Nueva Ocupación" else "Editar Ocupación",
                     style = MaterialTheme.typography.titleMedium
                     ) },
-                windowInsets = WindowInsets(0.dp),
                 navigationIcon = {
                     IconButton(onClick = onBack) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atras")

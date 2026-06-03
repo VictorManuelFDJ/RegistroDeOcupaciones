@@ -28,7 +28,8 @@ import java.time.ZoneId
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun FormHoraExtraSreen(
+fun FormHoraExtraScreen(
+    horaExtraId: Int,
     viewModel: FormHoraExtraViewModel = hiltViewModel(),
     onBack: () -> Unit
 ){
@@ -40,6 +41,10 @@ fun FormHoraExtraSreen(
     var showDatePicker by remember { mutableStateOf(false) }
     val datePickerState = rememberDatePickerState()
 
+    LaunchedEffect(key1 = horaExtraId) {
+        viewModel.loadHoraExtra(horaExtraId)
+    }
+
     LaunchedEffect(state.saved, state.deleted) {
         if (state.saved || state.deleted){
             onBack()
@@ -50,7 +55,6 @@ fun FormHoraExtraSreen(
             TopAppBar(
                 title = { Text(if (state.isNew)"Registrar Horas Extras" else "Editar Horas Extras",
                     style = MaterialTheme.typography.titleMedium) },
-                windowInsets = WindowInsets(0.dp),
                 navigationIcon = {
                     IconButton(onClick = onBack){
                     Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Atras")
